@@ -4,6 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DestinasiController;
 use App\Http\Controllers\ApiCBController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\KulinerController;
+use App\Http\Controllers\Oleh2Controller;
+use App\Http\Controllers\BudayaController;
+use App\Http\Controllers\StaycationController;
+use App\Http\Controllers\EdukasiController;
 use App\Http\Controllers\GoogleController;  // <-- Tambahkan controller Google
 
 // Home page
@@ -46,6 +51,16 @@ Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle']);  // <
 
 // Google Login - Callback setelah login dari Google
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']); // <-- Pindahkan ke controller
+
+Route::get('/kuliner', [KulinerController::class, 'index']);
+
+Route::get('/oleh', [Oleh2Controller::class, 'index']);
+
+Route::get('/budaya', [BudayaController::class, 'index']);
+
+Route::get('/staycation', [StaycationController::class, 'index'])->name('staycation.index');
+
+Route::get('/edukasi', [EdukasiController::class, 'index']);
 
 // Logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

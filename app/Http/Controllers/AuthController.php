@@ -9,29 +9,36 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    // Fungsi Registrasi
     public function register(Request $request)
     {
+        // Validasi input
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
         ]);
 
-        User::create([
+        // Membuat user baru
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($request->password), // Password di-hash
         ]);
 
-        return redirect('/login')->with('success', 'Register sukses! Silakan login.');
+        // Login otomatis setelah registrasi (opsional)
+        Auth::login($user);
+
+        return redirect('/dashboard')->with('success', 'Registrasi sukses! Selamat datang.');
     }
 
+    // Fungsi Login
     public function login(Request $request)
 {
     $credentials = $request->only('email', 'password');
 
     if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
+        $request->session()->regenerate(); // penting agar sesi aman
         return redirect()->intended('/dashboard');
     }
 
@@ -40,11 +47,13 @@ class AuthController extends Controller
     ]);
 }
 
-public function logout(Request $request)
-{
-    Auth::logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-    return redirect('/login');
-}
+
+    // Fungsi Logout
+    public function logout(Request $request)
+    {
+        Auth::logout(); // Logout user
+        $request->session()->invalidate(); // Hapus session
+        $request->session()->regenerateToken(); // Regenerasi token CSRF
+        return redirect('/login');
+    }
 }

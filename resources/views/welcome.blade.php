@@ -1,256 +1,215 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>Pariwisataku</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Roboto Condensed', sans-serif;
-    }
-    .zoom:hover {
-      transform: scale(1.05);
-      transition: transform 0.3s;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-    }
+    <meta charset="UTF-8">
+    <title>Pariwisata Jember</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rochester&family=Roboto+Condensed&display=swap" rel="stylesheet">
 
-    /* Styling for chatbot window */
-   /* Styling for chatbot window */
-#chatbot {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 300px;
-  max-height: 0;
-  opacity: 0;
-  visibility: hidden;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  z-index: 100;
-  transition: max-height 0.5s ease, opacity 0.5s ease, visibility 0s linear 0.5s;
-}
-
-#chatbot.open {
-  max-height: 400px; /* Ukuran chatbot saat terbuka */
-  opacity: 1;
-  visibility: visible;
-  transition: max-height 0.5s ease, opacity 0.5s ease;
-}
-
-#chatbotHeader {
-  background-color: #4caf50;
-  color: white;
-  padding: 10px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-#chatbox {
-  padding: 10px;
-  height: 200px;
-  overflow-y: auto;
-  background-color: #f9f9f9;
-}
-
-#chatInput {
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 4px;
-  width: 100%;
-  margin-top: 10px;
-}
-
-  </style>
+    <style>
+        body {
+            font-family: 'Roboto Condensed', sans-serif;
+            background-color: #f9f9f9;
+        }
+        .navbar-custom {
+            background-color: #AAD2E8;
+        }
+        .navbar-brand, .nav-link {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .hero {
+            background-image: url('/foto/back1.jpeg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+        .section-title {
+            font-family: 'Rochester', cursive;
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 50px;
+            color: #333;
+        }
+        .section-subtitle {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #555;
+        }
+        .card img, .img-fluid {
+            border-radius: 10px;
+            object-fit: cover;
+        }
+        .btn-primary, .btn-success {
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-weight: bold;
+        }
+        .btn-outline-primary {
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-weight: bold;
+        }
+        .hero h1 {
+            font-family: 'Rochester', cursive;
+            font-size: 56px;
+            margin-bottom: 20px;
+        }
+        .hero h2 {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 24px;
+        }
+        footer {
+            background-color: #AAD2E8;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+    </style>
 </head>
 
-<body class="bg-gradient-to-b from-blue-100 to-white min-h-screen">
-  <!-- Navbar -->
-  <nav class="bg-blue-200 px-6 py-4 flex justify-between items-center shadow-md">
-    <h1 class="text-xl font-bold">Pariwisataku</h1>
-    <ul class="flex space-x-4 text-sm font-semibold">
-      <li><a href="#" class="hover:text-blue-700">Home</a></li>
-      <li><a href="#destinasi" class="hover:text-blue-700">Wisata Alam</a></li>
-      <li><a href="#" class="hover:text-blue-700">Wisata Kuliner</a></li>
-      <li><a href="#" class="hover:text-blue-700">Budaya</a></li>
-      <li><a href="#" class="hover:text-blue-700">Kuliner</a></li>
-    </ul>
-    <a href="/login" class="bg-blue-600 text-white px-4 py-1 rounded-lg hover:bg-blue-700">Login</a>
-  </nav>
+<body>
 
-  <!-- Hero Section -->
-  <section class="text-center py-10 bg-cover bg-center relative" style="background-image: url('/foto/laut2.jpg');">
-    <div class="absolute inset-0 bg-black opacity-30"></div>
-    <div class="relative z-10">
-      <h2 class="text-lg italic text-white">“Eksplorasi Jember, Jelajahi Keindahan Tanpa Batas!”</h2>
-      <h1 class="text-2xl sm:text-3xl font-bold text-white mt-2">Cari Destinasi Wisata Jember Dengan Mudah & Cepat dengan AI</h1>
-      <div class="mt-6 flex justify-center relative">
-        <input type="text" placeholder="Cari destinasi..." class="w-2/3 sm:w-1/2 p-3 rounded-full shadow-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10" />
-        <img src="https://cdn-icons-png.flaticon.com/512/622/622669.png" class="w-5 h-5 absolute left-12 top-1/2 transform -translate-y-1/2 opacity-50" alt="search icon" />
-      </div>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light navbar-custom py-3">
+    <div class="container">
+        <a class="navbar-brand text-white" href="#">Pariwisata</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item mx-2">
+                    <a class="nav-link text-white" href="#">Home</a>
+                </li>
+                <li class="nav-item mx-2">
+                    <a class="nav-link text-white" href="#">Wisata Alam</a>
+                </li>
+                <li class="nav-item mx-2">
+                    <a class="nav-link text-white" href="#">Wisata Kuliner</a>
+                </li>
+                <li class="nav-item mx-2">
+                    <a class="nav-link text-white" href="#">Budaya</a>
+                </li>
+                <li class="nav-item mx-2">
+                    <a class="nav-link text-white" href="#">Staycation</a>
+                </li>
+            </ul>
+        </div>
+
+        <a class="btn btn-primary" href="{{ route('login') }}">Login</a>
     </div>
-  </section>
+</nav>
 
-  <!-- Bagian HTML Card -->
-  <section id="destinasi" class="px-6 py-10 bg-gradient-to-b from-white to-blue-100">
-    <h2 class="text-center text-xl font-bold text-gray-800 mb-6">Destinasi Unggulan</h2>
-    <div id="cardContainer" class="flex justify-center space-x-4 overflow-x-auto pb-4">
-      <!-- Card akan ditambahkan di sini melalui JavaScript -->
+<!-- Hero Section -->
+<section class="hero">
+    <h1>Eksplorasi Jember, Jelajahi Keindahan Tanpa Batas</h1>
+    <h2>Cari Destinasi Wisata Jember Dengan Mudah & Cepat dengan AI</h2>
+</section>
+
+<!-- Sejarah Jember -->
+<section class="container my-5">
+    <h2 class="section-title">Sejarah Jember</h2>
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <img src="/foto/back1.jpeg" class="img-fluid" alt="Pemkab Jember">
+        </div>
+        <div class="col-md-6">
+            <p class="section-subtitle">
+                Kabupaten Jember terletak di antara Kabupaten Lumajang dan Banyuwangi. 
+                Jember dikenal dengan berbagai destinasi wisata alam, budaya, dan kuliner. 
+                Selain terkenal dengan Jember Fashion Carnaval (JFC), Jember juga menawarkan 
+                kekayaan alam seperti air terjun dan pantai-pantai yang eksotis.
+            </p>
+        </div>
     </div>
-  </section>
+</section>
 
-
-  <!-- Modal Detail Destinasi -->
-  <div id="detailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-    <div class="bg-white p-6 rounded-xl shadow-lg max-w-md text-center">
-      <h2 id="modalTitle" class="text-xl font-bold mb-2"></h2>
-      <p id="modalDescription" class="text-gray-700 mb-4"></p>
-      <button onclick="closeModal()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Tutup</button>
+<!-- Destinasi -->
+<section class="container my-5">
+    <h2 class="section-title">Destinasi</h2>
+    <div class="row text-center g-4">
+        <div class="col-md-6">
+            <img src="/foto/air terjun.png" class="img-fluid" alt="Wisata Alam">
+            <h5 class="mt-3">Wisata Alam</h5>
+            <a href="#" class="btn btn-primary mt-2">Lihat Selengkapnya</a>
+        </div>
+        <div class="col-md-6">
+            <img src="/foto/makanan.png" class="img-fluid" alt="Wisata Kuliner">
+            <h5 class="mt-3">Wisata Kuliner</h5>
+            <a href="#" class="btn btn-primary mt-2">Lihat Selengkapnya</a>
+        </div>
     </div>
-  </div>
+</section>
 
-  <!-- Floating Chatbot and Contact -->
-  <div class="fixed bottom-6 right-6 flex flex-col space-y-3 z-50">
-  <button onclick="toggleChatbot()" class="bg-blue-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-blue-600 transition-transform hover:scale-105">
-  Chatbot
-</button>
-  </div>
-
-  <!-- Chatbot -->
-<div id="chatbot" class="flex flex-col transform transition-all duration-500 ease-in-out opacity-0 translate-y-10">
-  <div id="chatbotHeader" onclick="toggleChatbot()" class="bg-blue-500 text-white p-4 cursor-pointer">
-    Chatbot - Klik untuk Menutup
-  </div>
-  <div id="chatbox" class="bg-white p-4 rounded-b-xl shadow-lg">
-    <div id="chatContainer" class="space-y-2">
-      <p><strong>Chatbot:</strong> Halo! Ada yang bisa saya bantu tentang destinasi wisata Jember?</p>
+<!-- Budaya -->
+<section class="container my-5">
+    <h2 class="section-title">Budaya</h2>
+    <div class="row text-center g-4">
+        <div class="col-md-6">
+            <img src="/foto/JFC.jpeg" class="img-fluid" alt="JFC">
+            <h5 class="mt-3">JFC (Jember Fashion Carnaval)</h5>
+            <p class="section-subtitle">Acara tahunan menampilkan busana kreatif dari desainer lokal.</p>
+            <a href="#" class="btn btn-primary mt-2">Lihat Selengkapnya</a>
+        </div>
+        <div class="col-md-6">
+            <img src="/foto/Larung Sesaji.jpeg" class="img-fluid" alt="Lautan Budaya">
+            <h5 class="mt-3">Lautan Budaya</h5>
+            <p class="section-subtitle">Festival budaya lokal yang memperlihatkan kekayaan adat Jember.</p>
+            <a href="#" class="btn btn-primary mt-2">Lihat Selengkapnya</a>
+        </div>
     </div>
-    <form onsubmit="sendToChatGPT(); return false;" class="flex space-x-2 mt-2">
-      <input type="text" id="chatInput" placeholder="Ketik pesan..." class="flex-1 border rounded p-2 focus:outline-none" onkeyup="sendMessage(event)" />
-      <button type="submit" class="bg-blue-500 text-white px-4 rounded hover:bg-blue-600">Kirim</button>
-    </form>
-  </div>
-</div>
+</section>
+
+<!-- Staycation -->
+<section class="container my-5">
+    <h2 class="section-title">Staycation</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <img src="/foto/hotel1.jpeg" class="card-img-top" alt="Hotel 1">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Hotel Aston</h5>
+                    <a href="#" class="btn btn-success mt-2">Lihat Detail</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <img src="/foto/hotel2.jpeg" class="card-img-top" alt="Hotel 2">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Hotel 88</h5>
+                    <a href="#" class="btn btn-success mt-2">Lihat Detail</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <img src="/foto/hotel3.jpeg" class="card-img-top" alt="Hotel 3">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Hotel Java Lotus</h5>
+                    <a href="#" class="btn btn-success mt-2">Lihat Detail</a>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+</section>
 
-  <!-- Footer -->
-  <footer class="bg-blue-200 py-6 mt-10 text-center text-sm text-gray-700">
-    <p>&copy; 2025 Pariwisataku. All rights reserved.</p>
-  </footer>
+<!-- Footer -->
+<footer class="text-center py-3">
+    &copy; 2025 Pariwisata Jember
+</footer>
 
-  <script>
-function toggleChatbot() {
-  const chatbot = document.getElementById('chatbot');
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  // Toggle the open class to trigger the transition
-  if (chatbot.classList.contains('open')) {
-    chatbot.classList.remove('open');
-  } else {
-    chatbot.classList.add('open');
-  }
-}
-
-
-function appendMessage(sender, message) {
-  const chatContainer = document.getElementById('chatContainer');
-  
-  const messageElement = document.createElement('div');
-  messageElement.classList.add('message');
-
-  if (sender === 'Anda') {
-    messageElement.classList.add('user-message', 'text-right', 'text-green-700');
-  } else {
-    messageElement.classList.add('gpt-message', 'text-left', 'text-blue-700');
-  }
-
-  messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
-  chatContainer.appendChild(messageElement);
-
-  chatContainer.scrollTop = chatContainer.scrollHeight;
-}
-
-async function sendToChatGPT() {
-  const input = document.getElementById('chatInput');
-  const message = input.value.trim();
-  if (!message) return;
-
-  appendMessage('Anda', message);
-  input.value = '';
-
-  const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-  try {
-    const response = await fetch('/chatbot', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': token,
-      },
-      body: JSON.stringify({ message })
-    });
-
-    const data = await response.json();
-    if (response.ok) {
-      appendMessage('GPT', data.reply);
-    } else {
-      appendMessage('GPT', 'Maaf, terjadi kesalahan.');
-    }
-  } catch (error) {
-    appendMessage('GPT', 'Maaf, terjadi kesalahan saat menghubungi AI.');
-  }
-}
-
-function sendMessage(event) {
-  if (event.key === 'Enter') {
-    event.preventDefault(); // <--- penting cegah reload
-    sendToChatGPT();
-  }
-}
-
-
-// Ambil data destinasi
-fetch('/destinasi')
-.then(response => response.json())
-.then(data => {
-  const container = document.getElementById('cardContainer');
-  container.innerHTML = '';
-
-  data.forEach(item => {
-    const card = document.createElement('div');
-    card.className = "bg-white rounded-xl overflow-hidden shadow-lg zoom min-w-[140px] cursor-pointer";
-    card.onclick = () => showDetail(item.nama, item.deskripsi);
-    card.innerHTML = `
-      <img src="${item.gambar_url}" alt="${item.nama}" class="w-full h-24 object-cover">
-      <h3 class="p-2">${item.nama}</h3>
-    `;
-    container.appendChild(card);
-  });
-})
-.catch(error => {
-  console.error("Error fetching data:", error);
-  const container = document.getElementById('cardContainer');
-  container.innerHTML = '<p class="text-center text-red-500">Gagal memuat destinasi. Silakan coba lagi nanti.</p>';
-});
-
-// Modal
-function showDetail(title, description) {
-  document.getElementById('modalTitle').textContent = title;
-  document.getElementById('modalDescription').textContent = description;
-  document.getElementById('detailModal').classList.remove('hidden');
-}
-
-function closeModal() {
-  document.getElementById('detailModal').classList.add('hidden');
-}
-</script>
 </body>
-
 </html>

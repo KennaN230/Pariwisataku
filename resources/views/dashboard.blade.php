@@ -81,7 +81,8 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light navbar-custom py-3">
     <div class="container">
-    <h1>{{ Auth::user()->name }} </h1>
+    
+
 <form method="POST" action="/logout">
   @csrf
 </form>
@@ -91,27 +92,37 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item mx-2">
-                    <a class="nav-link text-white" href="#">Home</a>
-                </li>
-                <li class="nav-item mx-2">
-                    <a class="nav-link text-white" href="#">Wisata Alam</a>
-                </li>
-                <li class="nav-item mx-2">
-                    <a class="nav-link text-white" href="#">Wisata Kuliner</a>
-                </li>
-                <li class="nav-item mx-2">
-                    <a class="nav-link text-white" href="#">Budaya</a>
-                </li>
-                <li class="nav-item mx-2">
-                    <a class="nav-link text-white" href="#">Staycation</a>
-                </li>
-            </ul>
-        </div>
+        <!-- Navbar -->
+  <nav class="bg-white shadow p-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold text-blue-600">Pariwisataku</h1>
+        <ul class="flex items-center space-x-4">
+            <li><a href="#" class="text-gray-700 hover:text-blue-600">Home</a></li>
+            <li class="relative group">
+                <button class="text-gray-700 hover:text-blue-600 focus:outline-none">Wisata</button>
+                <ul class="absolute hidden group-hover:block bg-white text-black mt-2 rounded-md shadow-md w-48 z-10">
+                    <li><a href="/wisata-alam" class="block px-4 py-2 hover:bg-gray-100">Wisata Alam</a></li>
+                    <li><a href="/wisata-edukasi" class="block px-4 py-2 hover:bg-gray-100">Wisata Edukasi</a></li>
+                    <li><a href="/wisata-kuliner" class="block px-4 py-2 hover:bg-gray-100">Wisata Kuliner</a></li>
+                    <li><a href="/oleh-oleh" class="block px-4 py-2 hover:bg-gray-100">Oleh-Oleh</a></li>
+                </ul>
+            </li>
+            <li><a href="/budaya" class="text-gray-700 hover:text-blue-600">Budaya</a></li>
+            <li><a href="/staycation" class="text-gray-700 hover:text-blue-600">Staycation</a></li>
+            <li><a href="/login" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Login</a></li>
+        </ul>
+    </nav>
 
-        <a class="btn btn-primary" href="#">Login</a>
+        @if(Auth::check())
+    <div class="d-flex align-items-center gap-2">
+        <span class="text-white fw-bold">Halo, {{ Auth::user()->name }}</span>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="btn btn-danger">Logout</button>
+        </form>
+    </div>
+@else
+    <a class="btn btn-primary" href="{{ route('login') }}">Login</a>
+@endif
     </div>
 </nav>
 
