@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class GoogleController extends Controller
 {
@@ -21,13 +22,14 @@ class GoogleController extends Controller
         $googleUser = Socialite::driver('google')->user();
 
         // Cek apakah user sudah ada di database
-        $user = User::firstOrCreate(
+        // GoogleController.php
+        $user = User::updateOrCreate(
             ['email' => $googleUser->getEmail()],
             [
                 'name' => $googleUser->getName(),
                 'google_id' => $googleUser->getId(),
-                // Password dummy karena Google login tidak memerlukan password
-                'password' => encrypt('passworddummy')
+                // Jangan kosongkan password, isi dengan random string untuk mencegah login manual jika akun hanya untuk Google
+                'password' => Hash::make(Str::random(24)),
             ]
         );
 

@@ -9,51 +9,81 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // Fungsi Registrasi
+    // Register user baru (HANYA UNTUK USER BIASA)
     public function register(Request $request)
     {
-        // Validasi input
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
+        $validated = $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
-        // Membuat user baru
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password), // Password di-hash
+        // Create user dengan role null (user biasa)
+        User::create([
+            'name'     => $validated['name'],
+            'email'    => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role'     => 'user', // Pastikan role null untuk user biasa
         ]);
 
-        // Login otomatis setelah registrasi (opsional)
-        Auth::login($user);
-
-        return redirect('/dashboard')->with('success', 'Registrasi sukses! Selamat datang.');
+        return redirect()->route('login')->with('success', 'Akun berhasil dibuat, silakan login.');
     }
 
-    // Fungsi Login
+    // Login user (untuk semua role)
     public function login(Request $request)
 {
-    $credentials = $request->only('email', 'password');
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required', 'string'],
+    ]);
 
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate(); // penting agar sesi aman
-        return redirect()->intended('/dashboard');
+    if (Auth::attempt($credentials, $request->filled('remember'))) {
+        $request->session()->regenerate();
+
+        $user = Auth::user();
+        
+        // Redirect berdasarkan role
+        return match($user->role) {
+            'admin' => redirect()->intended(route('admin.dashboard')),
+            'manager' => redirect()->intended(route('manager.dashboard')),
+            default => redirect()->intended(route('dashboard'))
+        };
     }
 
     return back()->withErrors([
-        'email' => 'Email atau Password salah!',
-    ]);
+        'email' => 'Email atau password salah.',
+    ])->onlyInput('email');
 }
 
+    // Method khusus untuk mendaftarkan admin (hanya bisa diakses oleh manager)
+    public function registerAdmin(Request $request)
+    {
+        // Middleware 'auth' dan 'role:manager' harus diaplikasikan di route
+        
+        $validated = $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
+            'role'     => 'required|in:admin,manager', // Hanya boleh mendaftarkan admin atau manager
+        ]);
 
-    // Fungsi Logout
+        User::create([
+            'name'     => $validated['name'],
+            'email'    => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role'     => $validated['role'],
+        ]);
+
+        return back()->with('success', 'Akun admin/manager berhasil dibuat');
+    }
+
     public function logout(Request $request)
     {
-        Auth::logout(); // Logout user
-        $request->session()->invalidate(); // Hapus session
-        $request->session()->regenerateToken(); // Regenerasi token CSRF
-        return redirect('/login');
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('success', 'Berhasil logout');
     }
 }

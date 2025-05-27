@@ -5,28 +5,73 @@
   <title>Staycation - Penginapan</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 font-sans">
-
-  <!-- Navbar -->
+<body class="bg-blue-50 font-sans">
+<form method="POST" action="/logout">
+  @csrf
+</form>
+  <!-- Dropdown -->
   <nav class="bg-white shadow p-4 flex justify-between items-center">
-        <h1 class="text-xl font-bold text-blue-600">Pariwisataku</h1>
-        <ul class="flex items-center space-x-4">
-            <li><a href="#" class="text-gray-700 hover:text-blue-600">Home</a></li>
-            <!-- Dropdown (pakai klik, bukan hover) -->
-<li class="relative">
-    <button id="dropdownToggle" class="text-gray-700 hover:text-blue-600 focus:outline-none">Wisata</button>
-    <ul id="dropdownMenu" class="absolute hidden bg-white text-black mt-2 rounded-md shadow-md w-48 z-10">
-        <li><a href="/alam" class="block px-4 py-2 hover:bg-gray-100">Wisata Alam</a></li>
-        <li><a href="/edukasi" class="block px-4 py-2 hover:bg-gray-100">Wisata Edukasi</a></li>
-        <li><a href="/kuliner" class="block px-4 py-2 hover:bg-gray-100">Wisata Kuliner</a></li>
-        <li><a href="/oleh" class="block px-4 py-2 hover:bg-gray-100">Oleh-Oleh</a></li>
+    <h1 class="text-xl font-bold text-blue-600">Pariwisataku</h1>
+    <ul class="flex items-center space-x-4 relative">
+        <li>
+            <a href="/dashboard" class="{{ Request::is('/dashboard') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
+                Home
+            </a>
+        </li>
+
+        <!-- Dropdown Wisata -->
+        <li class="relative">
+            <button id="dropdownToggle" class="text-gray-700 hover:text-blue-600 focus:outline-none">
+                Wisata
+            </button>
+            <ul id="dropdownMenu" class="absolute hidden bg-white text-black mt-2 rounded-md shadow-md w-48 z-10">
+                <li>
+                    <a href="/alam" class="block px-4 py-2 hover:bg-gray-100 {{ Request::is('alam*') ? 'text-blue-600 font-semibold' : '' }}">
+                        Wisata Alam
+                    </a>
+                </li>
+                <li>
+                    <a href="/edukasi" class="block px-4 py-2 hover:bg-gray-100 {{ Request::is('edukasi*') ? 'text-blue-600 font-semibold' : '' }}">
+                        Wisata Edukasi
+                    </a>
+                </li>
+                <li>
+                    <a href="/kuliner" class="block px-4 py-2 hover:bg-gray-100 {{ Request::is('kuliner*') ? 'text-blue-600 font-semibold' : '' }}">
+                        Wisata Kuliner
+                    </a>
+                </li>
+                <li>
+                    <a href="/oleh" class="block px-4 py-2 hover:bg-gray-100 {{ Request::is('oleh*') ? 'text-blue-600 font-semibold' : '' }}">
+                        Oleh-Oleh
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li>
+            <a href="/budaya" class="{{ Request::is('budaya*') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
+                Budaya
+            </a>
+        </li>
+        <li>
+            <a href="/staycation" class="{{ Request::is('staycation*') ? 'text-blue-700 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
+                Staycation
+            </a>
+        </li>
+        @if(Auth::check())
+                        <li class="nav-item">
+                            <form method="POST" action="{{ route('logout') }}" class="d-flex">
+                                @csrf
+                                <button type="submit" class="btn btn-danger">Logout</button>
+                            </form>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
+                        </li>
+                    @endif
     </ul>
-</li>
-            <li><a href="/budaya" class="text-gray-700 hover:text-blue-600">Budaya</a></li>
-            <li><a href="/staycation" class="text-gray-700 hover:text-blue-600">Staycation</a></li>
-            <li><a href="/login" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Login</a></li>
-        </ul>
-    </nav>
+</nav>
 
   <!-- Judul -->
   <div class="text-center my-8">

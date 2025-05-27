@@ -6,12 +6,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 font-sans">
-
+<form method="POST" action="/logout">
+  @csrf
+</form>
     <!-- Navbar -->
     <nav class="bg-white shadow p-4 flex justify-between items-center">
         <h1 class="text-xl font-bold text-blue-600">Pariwisataku</h1>
         <ul class="flex items-center space-x-4">
-            <li><a href="#" class="text-gray-700 hover:text-blue-600">Home</a></li>
+            <li><a href="/dashboard" class="text-gray-700 hover:text-blue-600">Home</a></li>
              <!-- Dropdown (pakai klik, bukan hover) -->
 <li class="relative">
     <button id="dropdownToggle" class="text-gray-700 hover:text-blue-600 focus:outline-none">Wisata</button>
@@ -24,7 +26,18 @@
 </li>
             <li><a href="/budaya" class="text-gray-700 hover:text-blue-600">Budaya</a></li>
             <li><a href="/staycation" class="text-gray-700 hover:text-blue-600">Staycation</a></li>
-            <li><a href="/login" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Login</a></li>
+            @if(Auth::check())
+                        <li class="nav-item">
+                            <form method="POST" action="{{ route('logout') }}" class="d-flex">
+                                @csrf
+                                <button type="submit" class="btn btn-danger">Logout</button>
+                            </form>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
+                        </li>
+                    @endif
         </ul>
     </nav>
 

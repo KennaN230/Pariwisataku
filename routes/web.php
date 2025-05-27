@@ -1,66 +1,98 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DestinasiController;
-use App\Http\Controllers\ApiCBController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\KulinerController;
-use App\Http\Controllers\Oleh2Controller;
-use App\Http\Controllers\BudayaController;
-use App\Http\Controllers\StaycationController;
-use App\Http\Controllers\EdukasiController;
-use App\Http\Controllers\GoogleController;  // <-- Tambahkan controller Google
+use App\Http\Controllers\{
+    DestinasiController,
+    ApiCBController,
+    AuthController,
+    KulinerController,
+    Oleh2Controller,
+    BudayaController,
+    StaycationController,
+    EdukasiController,
+    WisataAlamController,
+    HomeController,
+    MapController,
+    GoogleController,
+    GeminiController,
+    AdminController
+};
 
-// Home page
-Route::get('/', function () {
-    return view('welcome');
-});
-
-// Dashboard page (butuh auth)
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware('auth');
-
-// API destinasi wisata (GET data destinasi)
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
+Route::view('/', 'welcome')->name('home');
 Route::get('/destinasi', [DestinasiController::class, 'index']);
+Route::get('/peta', [MapController::class, 'index'])->name('peta');
 
-// Chatbot API (POST untuk kirim pesan ke ChatGPT)
+// Chatbot API
 Route::post('/chatbot', [ApiCBController::class, 'handleRequest']);
+Route::get('/chatbot1', fn() => "Chatbot endpoint aktif. Gunakan POST untuk mengirim pesan.");
+Route::post('/ask-gemini', [GeminiController::class, 'ask'])->name('ask-gemini');
 
-// Untuk cek endpoint chatbot
-Route::get('/chatbot1', function () {
-    return "Chatbot endpoint aktif. Gunakan POST untuk mengirim pesan.";
+// Google OAuth
+Route::prefix('auth/google')->group(function () {
+    Route::get('/', [GoogleController::class, 'redirectToGoogle'])->name('google.login');
+    Route::get('/callback', [GoogleController::class, 'handleGoogleCallback'])->name('google.callback');
 });
 
-// Register
-Route::get('/register', function () {
-    return view('register');
+/*
+|--------------------------------------------------------------------------
+| Guest Only Routes (Register & Login)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('guest')->group(function () {
+    Route::view('/register', 'register')->name('register.form');
+    Route::post('/register', [AuthController::class, 'register'])->name('register');
+
+    Route::view('/login', 'login')->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
 });
-Route::post('/register', [AuthController::class, 'register']);
 
-// Login (menggunakan email/password)
-Route::get('/login', function () {
-    return view('login');
-})->name('login');
+/*
+|--------------------------------------------------------------------------
+| Authenticated User Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
-// Proses login (menggunakan email/password)
-Route::post('/login', [AuthController::class, 'login']);
+    // Wisata Categories
+    Route::get('/kuliner', [KulinerController::class, 'index'])->name('kuliner');
+    Route::get('/oleh', [Oleh2Controller::class, 'index'])->name('oleh');
+    Route::get('/budaya', [BudayaController::class, 'index'])->name('budaya');
+    Route::get('/staycation', [StaycationController::class, 'index'])->name('staycation.index');
+    Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi');
+    Route::get('/alam', [WisataAlamController::class, 'index'])->name('alam');
 
-// Google Login - Redirect ke Google
-Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle']);  // <-- Pindahkan ke controller
+    // Logout
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
 
-// Google Login - Callback setelah login dari Google
-Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']); // <-- Pindahkan ke controller
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
+Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    
+    // User Management
+    Route::get('/users', [AdminController::class, 'userIndex'])->name('admin.users.index');
+    Route::get('/users/create', [AdminController::class, 'userCreate'])->name('admin.users.create');
+    Route::post('/users', [AdminController::class, 'userStore'])->name('admin.users.store');
+    Route::delete('/users/{user}', [AdminController::class, 'userDestroy'])->name('admin.users.destroy');
+    
+    // Content Management
+    Route::resource('destinasi', DestinasiController::class)->except(['show']);
+});
 
-Route::get('/kuliner', [KulinerController::class, 'index']);
-
-Route::get('/oleh', [Oleh2Controller::class, 'index']);
-
-Route::get('/budaya', [BudayaController::class, 'index']);
-
-Route::get('/staycation', [StaycationController::class, 'index'])->name('staycation.index');
-
-Route::get('/edukasi', [EdukasiController::class, 'index']);
-
-// Logout
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+/*
+|--------------------------------------------------------------------------
+| Testing Routes
+|--------------------------------------------------------------------------
+*/
+Route::get('/testing', fn() => "Test Route is Working!")->name('testing');

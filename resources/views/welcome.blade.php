@@ -67,6 +67,10 @@
             font-family: 'Roboto Condensed', sans-serif;
             font-size: 24px;
         }
+        .navbar .dropdown-toggle::after {
+    display: none !important;
+}
+
         footer {
             background-color: #AAD2E8;
             color: white;
@@ -78,37 +82,60 @@
 
 <body>
 
+
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light navbar-custom py-3">
-    <div class="container">
-        <a class="navbar-brand text-white" href="#">Pariwisata</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+<nav class="navbar navbar-expand-lg shadow-sm" style="background-color: #ffffff;">
+  <div class="container">
+    <a class="navbar-brand text-primary fw-bold" href="/">Pariwisataku</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+      aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item mx-2">
-                    <a class="nav-link text-white" href="#">Home</a>
-                </li>
-                <li class="nav-item mx-2">
-                    <a class="nav-link text-white" href="#">Wisata Alam</a>
-                </li>
-                <li class="nav-item mx-2">
-                    <a class="nav-link text-white" href="#">Wisata Kuliner</a>
-                </li>
-                <li class="nav-item mx-2">
-                    <a class="nav-link text-white" href="#">Budaya</a>
-                </li>
-                <li class="nav-item mx-2">
-                    <a class="nav-link text-white" href="#">Staycation</a>
-                </li>
-            </ul>
-        </div>
-
-        <a class="btn btn-primary" href="{{ route('login') }}">Login</a>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link {{ Request::is('/') ? 'active text-primary fw-semibold' : 'text-dark' }}" href="/">Home</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle {{ Request::is('alam') || Request::is('edukasi') || Request::is('kuliner') || Request::is('oleh') ? 'text-primary fw-semibold' : 'text-dark' }}" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Wisata
+          </a>  
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item {{ Request::is('alam') ? 'fw-semibold text-primary' : '' }}" href="/alam">Wisata Alam</a></li>
+            <li><a class="dropdown-item {{ Request::is('edukasi') ? 'fw-semibold text-primary' : '' }}" href="/edukasi">Wisata Edukasi</a></li>
+            <li><a class="dropdown-item {{ Request::is('kuliner') ? 'fw-semibold text-primary' : '' }}" href="/kuliner">Wisata Kuliner</a></li>
+            <li><a class="dropdown-item {{ Request::is('oleh') ? 'fw-semibold text-primary' : '' }}" href="/oleh">Oleh-Oleh</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ Request::is('budaya') ? 'active text-primary fw-semibold' : 'text-dark' }}" href="/budaya">Budaya</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ Request::is('staycation') ? 'active text-primary fw-semibold' : 'text-dark' }}" href="/staycation">Staycation</a>
+        </li>
+        <li class="nav-item">
+          <a class="btn btn-primary ms-2" href="/login">Login</a>
+        </li>
+      </ul>
     </div>
+  </div>
 </nav>
+
+<script>
+    const toggle = document.getElementById('dropdownToggle');
+    const menu = document.getElementById('dropdownMenu');
+
+    toggle.addEventListener('click', () => {
+        menu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!toggle.contains(e.target) && !menu.contains(e.target)) {
+            menu.classList.add('hidden');
+        }
+    });
+</script>
 
 <!-- Hero Section -->
 <section class="hero">

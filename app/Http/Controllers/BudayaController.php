@@ -9,7 +9,7 @@ class BudayaController extends Controller
 {
     public function index()
     {
-        $budaya = Budaya::all();
-        return view('budaya', compact('budaya'));
+        $budaya = Budaya::all(); // Ambil semua data budaya
+        return view('budaya', compact('budaya')); // Kirim data budaya ke view
     }
 }
