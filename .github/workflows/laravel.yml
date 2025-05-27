@@ -63,10 +63,10 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             echo "📁 Masuk ke direktori proyek..."
-            cd /var/www/devops
+            cd Pariwisataku
             
             echo "🔄 Mengkonfigurasi Git..."
-            git config --global --add safe.directory /var/www/devops
+            git config --global --add safe.directory Pariwisataku
             
             echo "🔄 Menarik update dari branch main..."
             git fetch origin
