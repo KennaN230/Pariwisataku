@@ -61,7 +61,7 @@
         </form>
 
         <div class="text-center text-sm text-gray-600 mt-6">
-            Belum punya akun?
+            Daftar Disini?
             <a href="{{ url('/register') }}" class="text-blue-500 hover:underline font-medium">Daftar di sini</a>
         </div>
     </div>
