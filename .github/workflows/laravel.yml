@@ -36,7 +36,7 @@ jobs:
         
     - name: Execute tests via PHPUnit
       env:
-        DB_CONNECTION: sqlite
+        DB_CONNECTION: mysql
         DB_DATABASE: database/database.sqlite
       run: |
         echo "🧪 Menjalankan Unit Tests..."
