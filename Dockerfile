@@ -1,5 +1,5 @@
-# Base image: PHP-FPM 8.4
-FROM php:8.4-fpm
+# Base image: PHP-FPM 8.2
+FROM php:8.2-fpm
 
 # Install system dependencies + Nginx
 RUN apt-get update && apt-get install -y \
@@ -21,15 +21,20 @@ RUN apt-get update && apt-get install -y \
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install Node.js & npm
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
     && npm cache clean --force
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy project files
+# Copy entire project
 COPY . .
+
+# Install backend & frontend dependencies
+RUN composer install --no-interaction --optimize-autoloader \
+    && npm ci \
+    && npm run build
 
 # Copy Nginx config & entrypoint
 RUN rm -rf /etc/nginx/sites-enabled/
@@ -37,14 +42,8 @@ COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh && chmod -R 777 storage bootstrap/cache
 
-# Build Laravel & frontend
-RUN composer install --no-interaction --optimize-autoloader \
-    && npm ci \
-    && npm run build \
-    && cp public/build/.vite/manifest.json public/build
-
-# Expose web (nginx)
+# Expose web
 EXPOSE 80
 
-# Start both nginx and php-fpm
+# Start script
 ENTRYPOINT ["/bin/sh", "./entrypoint.sh"]

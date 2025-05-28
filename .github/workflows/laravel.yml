@@ -109,16 +109,16 @@ jobs:
             '
             
             echo "📦 Menjalankan composer install..."
-            docker exec -u www-data laravel-app composer install --no-interaction --prefer-dist --optimize-autoloader
+            docker exec -u www-data laravel_app composer install --no-interaction --prefer-dist --optimize-autoloader
             
             echo "🔐 Generate APP key..."
-            docker exec -u www-data laravel-app php artisan key:generate --force
+            docker exec -u www-data laravel_app php artisan key:generate --force
             
             echo "🧹 Membersihkan cache..."
-            docker exec -u www-data laravel-app php artisan config:clear
-            docker exec -u www-data laravel-app php artisan cache:clear
+            docker exec -u www-data laravel_app php artisan config:clear
+            docker exec -u www-data laravel_app php artisan cache:clear
             
             echo "🗃️ Reset dan migrasi database..."
-            docker exec -u www-data laravel-app php artisan migrate:fresh --force --seed
+            docker exec -u www-data laravel_app php artisan migrate:fresh --force --seed
             
             echo "✅ Deploy selesai!!!"
