@@ -98,7 +98,7 @@
     </div>
 
     <!-- Lokasi -->
-    <p class="text-sm text-gray-500">{{ $item->lokasi }}</p>
+    <p class="text-sm text-gray-500">{{ $item->deskripsi }}</p>
 
     <!-- Harga -->
     <div class="mt-2 text-sm text-gray-700 font-medium">

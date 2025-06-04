@@ -360,43 +360,46 @@
     </div>
     
     <div class="list-group">
-        <a href="tel:112" class="list-group-item list-group-item-action">
-            <div class="d-flex justify-content-between align-items-center">
-                <span>Panggilan Darurat Nasional</span>
-                <span class="badge bg-danger rounded-pill">112</span>
-            </div>
-        </a>
-        <a href="tel:110" class="list-group-item list-group-item-action">
+        <a href="tel:085730440944" 
+   class="list-group-item list-group-item-action" 
+   onclick="handleCall(event, '085730440944')">
+    <div class="d-flex justify-content-between align-items-center">
+        <span>Panggilan Darurat Nasional</span>
+        <span class="badge bg-danger rounded-pill">085730440944</span>
+    </div>
+</a>
+
+        <a href="tel:110" class="list-group-item list-group-item-action" onclick="makeCall('110')">
             <div class="d-flex justify-content-between align-items-center">
                 <span>Polisi</span>
                 <span class="badge bg-primary rounded-pill">110</span>
             </div>
         </a>
-        <a href="tel:118" class="list-group-item list-group-item-action">
+        <a href="tel:118" class="list-group-item list-group-item-action" onclick="makeCall('118')">
             <div class="d-flex justify-content-between align-items-center">
                 <span>Ambulans</span>
                 <span class="badge bg-danger rounded-pill">118</span>
             </div>
         </a>
-        <a href="tel:113" class="list-group-item list-group-item-action">
+        <a href="tel:113" class="list-group-item list-group-item-action" onclick="makeCall('113')">
             <div class="d-flex justify-content-between align-items-center">
                 <span>Pemadam Kebakaran</span>
                 <span class="badge bg-danger rounded-pill">113</span>
             </div>
         </a>
-        <a href="tel:119" class="list-group-item list-group-item-action">
+        <a href="tel:119" class="list-group-item list-group-item-action" onclick="makeCall('119')">
             <div class="d-flex justify-content-between align-items-center">
                 <span>SAR</span>
                 <span class="badge bg-warning rounded-pill text-dark">119</span>
             </div>
         </a>
-        <a href="tel:+6233174110" class="list-group-item list-group-item-action">
+        <a href="tel:+6233174110" class="list-group-item list-group-item-action" onclick="makeCall('+6233174110')">
             <div class="d-flex justify-content-between align-items-center">
                 <span>Polres Jember</span>
                 <span class="badge bg-primary rounded-pill">(0331) 74110</span>
             </div>
         </a>
-        <a href="tel:+62331321110" class="list-group-item list-group-item-action">
+        <a href="tel:+62331321110" class="list-group-item list-group-item-action" onclick="makeCall('+62331321110')">
             <div class="d-flex justify-content-between align-items-center">
                 <span>RSUD Dr. Soebandi</span>
                 <span class="badge bg-danger rounded-pill">(0331) 321110</span>
@@ -410,107 +413,201 @@
 </div>
 
 <script>
-    // Toggle emergency contact visibility
-function toggleEmergency() {
-    const emergencyBox = document.getElementById('emergency-box');
-    emergencyBox.style.display = emergencyBox.style.display === 'none' ? 'block' : 'none';
-    
-    // Close chat box if open
-    document.getElementById('chat-box').style.display = 'none';
-}
-
-// Ganti dengan API key Anda
-const GEMINI_API_KEY = 'AIzaSyAhFQ4Ch7QrAzZRAFin3KDx2ZLeOF-aY38';
-let chatHistory = [
-    {
-        role: "model",
-        parts: [{ text: "Hai! Mau cari wisata apa di Jember?" }]
+    function isMobileDevice() {
+        return /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
     }
-];
-let isWaiting = false;
-let lastRequestTime = 0;
-// Toggle chat visibility
-function toggleChat() {
-    const chatBox = document.getElementById('chat-box');
-    chatBox.style.display = chatBox.style.display === 'none' ? 'block' : 'none';
-    
-    // Close emergency box if open
-    document.getElementById('emergency-box').style.display = 'none';
-}
-async function sendMessage() {
-    const input = document.getElementById('chat-input');
-    const messages = document.getElementById('chat-messages');
-    const loadingIndicator = document.getElementById('loading-indicator');
-    const userText = input.value.trim();
 
-    if (!userText || isWaiting) return;
+    function handleCall(event, phoneNumber) {
+        event.preventDefault(); // Cegah default link
 
-    // Add user message to chat
-    messages.innerHTML += `<div><strong>Anda:</strong> ${userText}</div>`;
-    input.value = '';
-    isWaiting = true;
-    loadingIndicator.style.display = 'block';
-    messages.scrollTop = messages.scrollHeight;
+        // Pastikan nomor pakai format internasional tanpa +
+        const cleanNumber = phoneNumber.replace(/^(\+|0)/, '62');
 
-    try {
-        // Rate limiting - minimal 1 detik antara permintaan
-        const now = Date.now();
-        const timeSinceLastRequest = now - lastRequestTime;
-        if (timeSinceLastRequest < 1000) {
-            await new Promise(resolve => setTimeout(resolve, 1000 - timeSinceLastRequest));
+        if (isMobileDevice()) {
+            // Mobile: tel: link
+            window.location.href = `tel:${cleanNumber}`;
+        } else {
+            // Desktop: WhatsApp Web
+            const waLink = `https://wa.me/${cleanNumber}?text=Halo%2C%20saya%20perlu%20bantuan%20darurat.`;
+            window.open(waLink, '_blank');
         }
-
-        chatHistory.push({
-            role: "user",
-            parts: [{ text: userText }]
-        });
-
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                contents: chatHistory,
-                generationConfig: {
-                    maxOutputTokens: 1000 // Mengurangi output untuk menghemat quota
-                }
-            })
-        });
-
-        lastRequestTime = Date.now();
-
-        if (response.status === 429) {
-            throw new Error('Terlalu banyak permintaan. Silakan coba lagi nanti.');
-        }
-
-        if (response.status === 403) {
-            throw new Error('Kuota API telah habis. Silakan cek billing atau upgrade plan.');
-        }
-
-        if (!response.ok) {
-            throw new Error(await response.text());
-        }
-
-        const data = await response.json();
-        const botResponse = data.candidates[0].content.parts[0].text;
-        
-        messages.innerHTML += `<div><strong>Bot:</strong> ${botResponse}</div>`;
-        chatHistory.push({
-            role: "model",
-            parts: [{ text: botResponse }]
-        });
-        
-    } catch (e) {
-        console.error('Error:', e);
-        messages.innerHTML += `<div class="text-danger"><strong>Bot:</strong> ${e.message}</div>`;
-    } finally {
-        isWaiting = false;
-        loadingIndicator.style.display = 'none';
-        messages.scrollTop = messages.scrollHeight;
     }
-}
+
+    function toggleEmergency() {
+        const emergencyBox = document.getElementById('emergency-box');
+        emergencyBox.style.display = emergencyBox.style.display === 'none' ? 'block' : 'none';
+    }
 </script>
+
+
+<style>
+    .list-group-item-action {
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .list-group-item-action:hover {
+        background-color: #f8f9fa;
+        transform: translateX(2px);
+    }
+    .list-group-item:active {
+        background-color: #e9ecef;
+    }
+</style>
+
+<script>
+    // Toggle emergency contact visibility
+    function toggleEmergency() {
+        const emergencyBox = document.getElementById('emergency-box');
+        emergencyBox.style.display = emergencyBox.style.display === 'none' ? 'block' : 'none';
+        
+        // Close chat box if open
+        document.getElementById('chat-box').style.display = 'none';
+    }
+
+    // Ganti dengan API key Anda
+    const GEMINI_API_KEY = 'AIzaSyAhFQ4Ch7QrAzZRAFin3KDx2ZLeOF-aY38';
+    let chatHistory = [
+        {
+            role: "model",
+            parts: [{ text: "Hai! Saya teman wisata kamu di Jember. Mau cari info apa nih? Mau rekomendasi tempat wisata, kuliner enak, atau event seru?" }]
+        }
+    ];
+    let isWaiting = false;
+    let lastRequestTime = 0;
+
+    // Toggle chat visibility
+    function toggleChat() {
+        const chatBox = document.getElementById('chat-box');
+        chatBox.style.display = chatBox.style.display === 'none' ? 'block' : 'none';
+        
+        // Close emergency box if open
+        document.getElementById('emergency-box').style.display = 'none';
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('chat-input');
+        const messages = document.getElementById('chat-messages');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const userText = input.value.trim();
+
+        if (!userText || isWaiting) return;
+
+        // Add user message to chat
+        messages.innerHTML += `<div class="user-message"><strong>Kamu:</strong> ${userText}</div>`;
+        input.value = '';
+        isWaiting = true;
+        loadingIndicator.style.display = 'block';
+        messages.scrollTop = messages.scrollHeight;
+
+        try {
+            // Rate limiting
+            const now = Date.now();
+            const timeSinceLastRequest = now - lastRequestTime;
+            if (timeSinceLastRequest < 1000) {
+                await new Promise(resolve => setTimeout(resolve, 1000 - timeSinceLastRequest));
+            }
+
+            // More natural prompt
+            const enhancedPrompt = `Kamu adalah teman lokal di Jember yang ramah dan berpengalaman dalam wisata. 
+            Bicaralah secara santai seperti teman bicara, dengan bahasa sehari-hari yang natural:
+            - Gunakan kata ganti "aku" dan "kamu"
+            - Jika pengguna mengetik "halo" dan "hai" jawab dengan "Selamat Menjelajah menggunakan PARIWISATAKU!. Ada yang bisa saya bantu" itu saja jangan tambahkan kata2 lain
+            - Sering gunakan kata seru seperti "nih", "deh", "ya"
+            - Beri rekomendasi spesifik khas Jember
+            - Jangan terlalu formal
+            - Batasi 3-5 kalimat per respons
+            - Fokus pada: Pantai Papuma, Rembangan, Botani Garden, Suwar-suwir, Tape, Kopi Lanang, JFC
+            jawablah dengan santai dan friendly jangan lupa informatif ya, maks 1 paragraf agar terlihat simple dan juga mengandung informasi yang kompleks
+            
+            Pertanyaan: ${userText}`;
+
+            chatHistory.push({
+                role: "user",
+                parts: [{ text: enhancedPrompt }]
+            });
+
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: chatHistory,
+                    generationConfig: {
+                        maxOutputTokens: 800,
+                        temperature: 0.9 // Lebih kreatif dan natural
+                    }
+                })
+            });
+
+            lastRequestTime = Date.now();
+
+            if (!response.ok) {
+                throw new Error('Aduh, aku lagi error nih. Coba lagi ya?');
+            }
+
+            const data = await response.json();
+            let botResponse = data.candidates[0].content.parts[0].text;
+            
+            // Remove any remaining markdown formatting
+            botResponse = botResponse.replace(/\*\*/g, '');
+            
+            messages.innerHTML += `<div class="bot-message"><strong>Teman Jember:</strong> ${botResponse}</div>`;
+            chatHistory.push({
+                role: "model",
+                parts: [{ text: botResponse }]
+            });
+            
+        } catch (e) {
+            console.error('Error:', e);
+            messages.innerHTML += `<div class="error-message"><strong>Oops:</strong> ${e.message}</div>`;
+        } finally {
+            isWaiting = false;
+            loadingIndicator.style.display = 'none';
+            messages.scrollTop = messages.scrollHeight;
+        }
+    }
+
+    // Handle Enter key
+    document.getElementById('chat-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+</script>
+
+<style>
+    .user-message {
+        background-color: #e3f2fd;
+        padding: 10px;
+        margin: 8px;
+        border-radius: 18px 18px 0 18px;
+        max-width: 80%;
+        float: right;
+        clear: both;
+    }
+    .bot-message {
+        background-color: #f1f1f1;
+        padding: 10px;
+        margin: 8px;
+        border-radius: 18px 18px 18px 0;
+        max-width: 80%;
+        float: left;
+        clear: both;
+    }
+    .error-message {
+        color: #e53935;
+        padding: 10px;
+        margin: 8px;
+        border-radius: 18px;
+        background-color: #ffebee;
+    }
+    #chat-input {
+        border-radius: 24px;
+        padding: 12px 20px;
+        border: 1px solid #ddd;
+    }
+</style>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
