@@ -20,18 +20,7 @@
             font-weight: bold;
             font-size: 18px;
         }
-        .hero {
-            background-image: url('/foto/back1.jpeg');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
-        }
+        
         .section-title {
             font-family: 'Rochester', cursive;
             font-size: 48px;
@@ -152,17 +141,17 @@
 
     <!-- Rest of the content remains exactly the same -->
     <!-- Hero Section -->
-    <section class="hero">
+    <<div class="hero" id="hero-section">
         <h1>Eksplorasi Jember, Jelajahi Keindahan Tanpa Batas</h1>
         <h2>Cari Destinasi Wisata Jember Dengan Mudah & Cepat dengan AI</h2>
-    </section>
+    </div>
 
     <!-- Sejarah Jember -->
     <section class="container my-5">
         <h2 class="section-title">Sejarah Jember</h2>
         <div class="row align-items-center">
             <div class="col-md-6">
-                <img src="/foto/back1.jpeg" class="img-fluid" alt="Pemkab Jember">
+                <img src="https://bangsaonline.com/images/uploads/berita/b36173c743d8b63b616f8f3792b385ee.jpg" class="img-fluid" alt="Pemkab Jember">
             </div>
             <div class="col-md-6">
                 <p class="section-subtitle">
@@ -609,5 +598,22 @@
     }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const heroSection = document.getElementById("hero-section");
+
+        heroSection.style.backgroundImage = "url('{{ asset('foto/back1.jpeg') }}')";
+        heroSection.style.backgroundSize = "cover";
+        heroSection.style.backgroundPosition = "center";
+        heroSection.style.color = "white";
+        heroSection.style.height = "100vh";
+        heroSection.style.display = "flex";
+        heroSection.style.flexDirection = "column";
+        heroSection.style.justifyContent = "center";
+        heroSection.style.alignItems = "center";
+        heroSection.style.textShadow = "2px 2px 5px rgba(0,0,0,0.5)";
+    });
+</script>
+
 </body>
 </html>
