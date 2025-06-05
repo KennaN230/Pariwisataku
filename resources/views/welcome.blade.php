@@ -19,7 +19,7 @@
             font-size: 18px;
         }
         .hero {
-            background-image: url('/foto/back1.jpeg');
+            background-image: url('https://static5.depositphotos.com/1037262/443/i/450/depositphotos_4436189-stock-photo-paradise-beach.jpg');
             background-size: cover;
             background-position: center;
             color: white;
@@ -148,7 +148,7 @@
     <h2 class="section-title">Sejarah Jember</h2>
     <div class="row align-items-center">
         <div class="col-md-6">
-            <img src="/foto/back1.jpeg" class="img-fluid" alt="Pemkab Jember">
+            <img src="https://bangsaonline.com/images/uploads/berita/b36173c743d8b63b616f8f3792b385ee.jpg" class="img-fluid" alt="Pemkab Jember">
         </div>
         <div class="col-md-6">
             <p class="section-subtitle">

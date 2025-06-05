@@ -181,7 +181,7 @@
                              style="height: 250px; width: 100%; object-fit: cover; border-radius: 10px;">
                         <h5>{{ $alamItem->nama }}</h5>
                         <p class="section-subtitle">{{ Str::limit($alamItem->deskripsi, 100) }}</p>
-                        <a href="#" class="btn btn-outline-primary mt-2">Lihat Selengkapnya</a>
+                        <a href="/alam" class="btn btn-outline-primary mt-2">Lihat Selengkapnya</a>
                     @else
                         <div class="alert alert-warning">Belum ada data wisata alam</div>
                     @endif
@@ -210,7 +210,7 @@
                                 Rp {{ number_format($kulinerItem->harga, 0, ',', '.') }}
                             </span>
                         </div>
-                        <a href="#" class="btn btn-outline-success mt-2">Lihat Selengkapnya</a>
+                        <a href="/kuliner" class="btn btn-outline-success mt-2">Lihat Selengkapnya</a>
                     @else
                         <div class="alert alert-warning">
                             <i class="fas fa-utensils me-2"></i> Belum ada data wisata kuliner
@@ -231,7 +231,7 @@
                 <img src="{{ $item->gambar }}" class="img-fluid" alt="{{ $item->nama }}">
                     <h5 class="mt-3">{{ $item->nama }}</h5>
                     <p class="section-subtitle">{{ $item->deskripsi }}</p>
-                    <a href="#" class="btn btn-primary mt-2">Lihat Selengkapnya</a>
+                    <a href="/budaya" class="btn btn-primary mt-2">Lihat Selengkapnya</a>
                 </div>
             @endforeach
         </div>
@@ -602,7 +602,7 @@
     document.addEventListener("DOMContentLoaded", function() {
         const heroSection = document.getElementById("hero-section");
 
-        heroSection.style.backgroundImage = "url('{{ asset('foto/back1.jpeg') }}')";
+        heroSection.style.backgroundImage = "url('https://static5.depositphotos.com/1037262/443/i/450/depositphotos_4436189-stock-photo-paradise-beach.jpg')";
         heroSection.style.backgroundSize = "cover";
         heroSection.style.backgroundPosition = "center";
         heroSection.style.color = "white";
