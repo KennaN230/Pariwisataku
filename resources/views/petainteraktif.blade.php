@@ -8,6 +8,34 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 <style>
+
+    .category-filter {
+    position: absolute;
+    top: 100px;
+    right: 20px;
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.category-filter.hidden {
+    opacity: 0;
+    transform: translateX(20px);
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    .category-filter {
+        top: 80px;
+        right: 10px;
+        max-width: 150px;
+    }
+}
     #map {
         height: 600px;
         border-radius: 12px;
@@ -237,6 +265,9 @@
     </button>
     <button id="show-souvenirs" class="map-btn map-btn-warning">
         <i class="fas fa-gift"></i> Toko Oleh-Oleh
+    </button>
+    <button id="toggle-filter-btn" class="map-btn map-btn-secondary">
+        <i class="fas fa-filter"></i> Sembunyikan Filter
     </button>
 </div>
 
@@ -636,6 +667,25 @@
             button.style.boxShadow = '';
         });
     });
+    
+    const filterPanel = document.querySelector('.category-filter');
+const toggleFilterBtn = document.getElementById('toggle-filter-btn');
+let isFilterVisible = true;
+
+toggleFilterBtn.addEventListener('click', () => {
+    isFilterVisible = !isFilterVisible;
+    
+    if (isFilterVisible) {
+        filterPanel.classList.remove('hidden');
+        toggleFilterBtn.innerHTML = '<i class="fas fa-filter"></i> Sembunyikan Filter';
+    } else {
+        filterPanel.classList.add('hidden');
+        toggleFilterBtn.innerHTML = '<i class="fas fa-filter"></i> Tampilkan Filter';
+    }
+    
+    // Untuk memastikan map tidak terganggu oleh event
+    map.invalidateSize();
+});
 
     // Ensure map size is correct
     setTimeout(() => {
